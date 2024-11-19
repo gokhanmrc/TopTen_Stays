@@ -8,42 +8,6 @@ Data Source
 
 The dataset used in this project is available on Kaggle: [515K Hotel Reviews Data in Europe](https://www.kaggle.com/datasets/jiashenliu/515k-hotel-reviews-data-in-europe/data).
 
-
-📁 Repository Structure
-Here is the structure of the repository:
-
-Miuul Final Project/
-
-├── Codes/
-
-│   └── FinalProjectCode.py       # Main project code
-
-├── Dataset/
-
-│   └── Hotel_reviews.py          # Dataset processing script
-
-├── Images/
-
-│   ├── Images1.png             # Visualizations and graphs
-
-│   ├── Images2.png
-
-│   ├── Images3.png
-
-│   ├── Images4.png
-
-│   ├── Icon1.png
-
-│   └── Icon2.png
-
-├── ProductionCode/
-
-│   └── Start_App.py              # Deployment script
-
-├── LICENSE                       # License for the project
-
-└── README.md                     # Project documentation
-
 🚀 Features
 Data Processing: Cleans and prepares hotel reviews data.
 Visualization: Includes visual outputs like charts and graphs (stored in the Images/ folder).
