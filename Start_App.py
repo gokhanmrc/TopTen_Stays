@@ -13,7 +13,6 @@ st.logo(
     size="large",
     icon_image="images/icon_s_1.png"
 )
-#layout="wide"
 st.set_page_config(layout="wide", page_title="TopTen Stays", page_icon="🏨")
 st.title(":orange[TopTen Stays]🥂🌇")
 home_tab, data_tab, recomandations_tab = st.tabs(["Home", "Data", "Recomandations"])
@@ -34,14 +33,14 @@ For trips to the **_United Kingdom, Spain, France, the Netherlands, Austria, or 
 image_right.image("images/toplar.png",width=400)
 
 
-# Başlık ve kısa tanıtım
+# Title and short introduction
 st.sidebar.title(":orange[Discover Your Ideal Stay!] 🌍")
 st.sidebar.markdown("Explore top-rated hotels across Europe’s best destinations.")
 
-# Bilgilendirici görsel
+# Informative visual
 st.sidebar.image("images/otel.png", caption="Find the best hotels for an unforgettable stay.", use_container_width=True)
 
-# Popüler Destinasyonlar
+# Popular Destinations
 st.sidebar.markdown("### Top Destinations")
 st.sidebar.markdown("""
 - **London** - Explore the heart of the UK.
@@ -52,7 +51,7 @@ st.sidebar.markdown("""
 - **Rome** - Walk through ancient history.
 """)
 
-# Uygulama hakkında bilgi
+# Information about the application
 st.sidebar.markdown("### About")
 st.sidebar.info(
     "This hotel recommendation system helps you find the top 10 hotels across Europe’s best capitals. "
@@ -232,7 +231,7 @@ data_tab.dataframe(df_first10)
 
 data_tab.title("Hotel Data Visualizations")
 graph1, grap2 = data_tab.columns([2,2], gap="small")
-
+#Graph1
 graph1.subheader("Number of Hotels by Country")
 plt.figure(figsize=(5, 4))
 ax = sns.countplot(data=df, x='Country_name', palette='viridis')
@@ -248,7 +247,7 @@ plt.xticks(rotation=45, fontsize=8)
 plt.yticks(fontsize=8)
 graph1.pyplot(plt.gcf())
 
-# Otel bazında hybrid_sorting_score grafiği
+#Graph2
 grap2.subheader("Hotels by Blended Sorting Score")
 plt.figure(figsize=(6, 4))  # Daha küçük bir boyut seçildi
 df_first10 = df_first10.sort_values(by="hybrid_sorting_score", ascending=False)
@@ -446,10 +445,8 @@ country_counts_head = (df_reviews["Reviewer_Nationality"]
 
 @st.cache_data
 def top_10_hotels_by_country_filtered(dataframe, Country_name, nation_selected=False):
-    # Ülkeye göre filtreleme
     Country_hotels = dataframe[dataframe['Country_name'] == Country_name]
 
-    # Eğer nation seçildiyse, Nation_Based_Weighted_Score sütunu dahil edilir
     if nation_selected:
         selected_columns = [
             "Hotel_Name", 'Hotel_Address', 'Nation_Based_Weighted_Score',
@@ -466,12 +463,10 @@ def top_10_hotels_by_country_filtered(dataframe, Country_name, nation_selected=F
     top_10_hotels = Country_hotels[selected_columns].sort_values(by="hybrid_sorting_score", ascending=False).head(10)
 
 
-    # Yuvarlama işlemi
     if 'Nation_Based_Weighted_Score' in top_10_hotels.columns:
         top_10_hotels['Nation_Based_Weighted_Score'] = top_10_hotels['Nation_Based_Weighted_Score'].round(2)
     top_10_hotels['hybrid_sorting_score'] = top_10_hotels['hybrid_sorting_score'].round(2)
 
-    # Sütun isimlerini değiştirme
     rename_columns = {
         "Hotel_Name": "Hotel Name",
         'Hotel_Address': 'Address',
@@ -482,19 +477,14 @@ def top_10_hotels_by_country_filtered(dataframe, Country_name, nation_selected=F
         'hybrid_sorting_score': 'Score',
         'Country_name': 'Country'
     }
-    # Mevcut sütunlarla eşleşen sütunları yeniden adlandır
     top_10_hotels = top_10_hotels.rename(columns={k: v for k, v in rename_columns.items() if k in top_10_hotels.columns})
 
-    # Reset index ve ardından 1'den başlat
     top_10_hotels.reset_index(drop=True, inplace=True)
     top_10_hotels.index = top_10_hotels.index + 1
 
     return top_10_hotels
 
-
-
-
-# Kullanıcı seçimleri
+# User selections
 user_selected_nation = recomandations_tab.selectbox(
     "Select a nation",
     options=["All Nations"] + country_counts_head.Reviewer_Nationality.unique().tolist()
@@ -510,7 +500,6 @@ user_selected_country = recomandations_tab.selectbox("Select a country",
 
 if recomandations_tab.button("List Hotels", use_container_width=True, icon="🥂"):
     if user_selected_nation:  # Eğer bir nation seçilmişse
-        # Kullanıcının seçtiği ülkeye ve nation'a göre filtrele
         df_reviews_filtered = get_data(nation_x=[user_selected_nation])
         top_hotels = top_10_hotels_by_country_filtered(
             df_reviews_filtered,
@@ -518,14 +507,13 @@ if recomandations_tab.button("List Hotels", use_container_width=True, icon="🥂
             nation_selected=True)
 
     else:
-        # Nation seçilmemişse tüm datayı al
         df_reviews_filtered = df_1.copy()
         top_hotels = top_10_hotels_by_country_filtered(
             df_reviews_filtered,
             Country_name=user_selected_country,
             nation_selected=False)
 
-    # Kullanıcıya otelleri göstermek için bir tablo oluştur
+   # Create a table to show hotels to the user
     recomandations_tab.write(f"Top 10 Hotels for {user_selected_country} - Feedback from {user_selected_nation if user_selected_nation else 'All Nations'}")
     recomandations_tab.dataframe(top_hotels, use_container_width=True)
 
